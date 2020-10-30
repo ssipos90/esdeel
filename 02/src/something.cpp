@@ -1,9 +1,7 @@
-#include <iostream>
-
-#include "something.hpp"
-
-int somefunc() {
-  std::cout << "ceva";
-  return 0;
+int blah() {
+  return 2;
 }
 
+int asdsa () {
+  return blah();
+};
