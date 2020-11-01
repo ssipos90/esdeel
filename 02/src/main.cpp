@@ -7,6 +7,7 @@
 #include <map>
 
 #include "config.hpp"
+#include "assets.hpp"
 #include "enums.hpp"
 #include "media.hpp"
 #include "Dot.hpp"
@@ -15,7 +16,7 @@ typedef struct {
     SDL_Renderer *renderer;
     SDL_Window *window;
     SDL_Surface *screen;
-    SDL_Texture *textures[TEXTURE_TOTAL];    
+    SDL_Texture *textures[TEXTURE_TOTAL];
     SDL_Surface *images[IMAGE_TOTAL];
     SDL_Event event;
     bool exit = false;
@@ -83,24 +84,136 @@ void close() {
   SDL_Quit();
 }
 
-void loop() {
-  // Top left corner viewport
-  Dot dot;
+struct Piece {
+  unsigned x;
+  unsigned y;
+  Piece *prev = NULL;
+  Piece *next = NULL;
+};
 
+class Snake {
+  static const int acc = 1;
+
+public:
+  Snake () {
+    for (int i = 1; i < GRID_SIZE - 1; i++) {
+      tail[i].prev = &tail[i - 1];
+      tail[i].next = &tail[i + 1 ];
+    }
+
+    head = &tail[0];
+
+    tail[0].x = 0;
+    tail[0].y = 0;
+    tail[0].prev = &tail[GRID_SIZE - 1];
+    tail[0].next = &tail[1];
+
+    tail[GRID_SIZE - 1].prev = &tail[GRID_SIZE - 2];
+    tail[GRID_SIZE - 1].next = &tail[0];
+  }
+
+  void go(unsigned dir) {
+    if (dir < DIR_UP || dir > DIR_RIGHT) {
+      std::cerr << "Unknown direction" << std::endl;
+      return;
+    }
+
+    if(dir == direction) {
+      return;
+    }
+
+    int sum = dir + direction;
+    if (sum == 1 || sum == 5) {
+      std::cerr << "cannot go in opposite direction" << std::endl;
+      return;
+    }
+      
+    direction = dir;
+  }
+
+  void move() {
+    switch(direction) {
+    case DIR_UP:
+      moveUp();
+      break;
+    case DIR_DOWN:
+      moveDown();
+      break;
+    case DIR_LEFT:
+      moveLeft();
+      break;
+    case DIR_RIGHT:
+      moveRight();
+      break;
+    }
+  }
+
+  int** getPieces() {
+    int **pieces = new int*[clen];
+    int i = 0;
+    Piece *p = head;
+    do {
+      pieces[i  ][0] = p->x;
+      pieces[i++][1] = p->y;
+    } while (p->next != NULL);
+
+    return pieces;
+  }
+
+private:
+  unsigned direction = DIR_RIGHT;
+  int vel = 10;
+  int clen = 1;
+  Piece *head;
+  Piece tail[GRID_SIZE];
+
+  void moveUp() {
+  }
+  void moveDown() {
+  }
+  void moveLeft() {
+  }
+  void moveRight() {
+    head->next->x = head->x + 1;
+    head->next->y = head->y;
+  }
+};
+
+void handleEvent(Snake *snake) {
+  if (app.event.type == SDL_KEYDOWN) {
+    switch (app.event.key.keysym.sym) {
+    case SDLK_UP:
+      snake->go(DIR_UP);
+      break;
+    case SDLK_DOWN:
+      break;
+    case SDLK_LEFT:
+      break;
+    case SDLK_RIGHT:
+      break;
+    }
+  }
+}
+
+void loop() {
+  Snake snake;
   while (!app.exit) {
     while (SDL_PollEvent(&app.event) != 0) {
       if (app.event.type == SDL_QUIT) {
         app.exit = true;
         break;
       }
-      dot.handleEvent(app.event);
+      handleEvent(&snake);
     }
-    dot.move();
+    snake.move();
 
     SDL_SetRenderDrawColor(app.renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear( app.renderer );
 
-    dot.render(app.renderer);
+    SDL_Rect pieceSquare;
+    auto **pieces = snake.getPieces();
+    for (auto const *piece: &pieces) {
+    }
 
     SDL_RenderPresent(app.renderer);
     SDL_Delay(30);

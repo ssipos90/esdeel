@@ -17,3 +17,5 @@ enum ResourceTextures {
   TEXTURE_TOTAL
 };
 
+enum Direction { DIR_UP, DIR_DOWN, DIR_LEFT, DIR_RIGHT };
+

@@ -1,7 +1,7 @@
 APP=esdeel02
 
 CXX      = clang++
-LIBS     = -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL_mixer -lpthread
+LIBS     = -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lpthread
 CXXFLAGS =  -std=c++17 -Wall -Wc++17-extensions
 LDFLAGS  = $(CXXFLAGS) $(LIBS) -L./lib
 
