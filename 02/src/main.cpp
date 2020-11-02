@@ -10,7 +10,6 @@
 #include "assets.hpp"
 #include "enums.hpp"
 #include "media.hpp"
-#include "Dot.hpp"
 
 typedef struct {
     SDL_Renderer *renderer;
@@ -148,14 +147,17 @@ public:
     }
   }
 
-  int** getPieces() {
-    int **pieces = new int*[clen];
+  unsigned** getPieces() {
+    unsigned **pieces = new unsigned*[clen];
     int i = 0;
     Piece *p = head;
     do {
-      pieces[i  ][0] = p->x;
-      pieces[i++][1] = p->y;
-    } while (p->next != NULL);
+      pieces[i++] = new unsigned[2]{
+        p->x,
+        p->y
+      };
+      p = p->next;
+    } while (p != NULL);
 
     return pieces;
   }
@@ -176,6 +178,12 @@ private:
   void moveRight() {
     head->next->x = head->x + 1;
     head->next->y = head->y;
+    Piece *prev = head->prev;
+    while(prev != NULL) {
+      prev = head->prev;
+    }
+    if(prev) {
+      prev->x = NULL;
   }
 };
 
@@ -197,7 +205,11 @@ void handleEvent(Snake *snake) {
 
 void loop() {
   Snake snake;
+
+  Uint32 starttime;
+  Uint32 deltatime;
   while (!app.exit) {
+    starttime = SDL_GetTicks();
     while (SDL_PollEvent(&app.event) != 0) {
       if (app.event.type == SDL_QUIT) {
         app.exit = true;
@@ -211,12 +223,17 @@ void loop() {
     SDL_RenderClear( app.renderer );
 
     SDL_Rect pieceSquare;
-    auto **pieces = snake.getPieces();
-    for (auto const *piece: &pieces) {
+    auto pieces = snake.getPieces();
+    for (int i = 0; i < sizeof(pieces); i++) {
+      pieceSquare.x = pieces[i][0];
+      pieceSquare.y = pieces[i][1];
     }
 
     SDL_RenderPresent(app.renderer);
-    SDL_Delay(30);
+    deltatime = SDL_GetTicks() - starttime;
+    if (deltatime <= (1000 / FPS)) {
+      SDL_Delay((1000 / FPS) - deltatime);
+    }
   }
 }
 
