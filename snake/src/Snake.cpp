@@ -1,5 +1,7 @@
+#include <SDL2/SDL_stdinc.h>
 #include <iostream>
 #include "Snake.hpp"
+#include "config.hpp"
 
 Snake::Snake () {
     for (int i = 1; i < GRID_SIZE - 1; i++) {
@@ -24,6 +26,7 @@ void Snake::go(Direction dir) {
       return;
     }
 
+
     if ((direction == Direction::UP && dir == Direction::DOWN) ||
         (direction == Direction::DOWN && dir == Direction::UP) ||
         (direction == Direction::RIGHT && dir == Direction::LEFT) ||
@@ -32,10 +35,20 @@ void Snake::go(Direction dir) {
       return;
     }
 
+    std::cout  << "Direction changed: " << std::endl;
+
     direction = dir;
   }
 
-void Snake::move() {
+void Snake::move(const Uint32 deltatime) {
+  dt += deltatime;
+  if (dt < 100000 / vel) {
+    return;
+  }
+
+  vel+=10;
+
+  dt = 0;
   switch (direction) {
   case Direction::UP:
     std::cout << "up" << std::endl;
@@ -63,30 +76,68 @@ unsigned** Snake::getPieces() {
   do {
     pieces[i++] = new unsigned[2]{p->x, p->y};
     p = p->next;
-  } while (p != NULL);
+  } while (p != nullptr);
 
   return pieces;
 }
 
-void Snake::moveUp() {}
+void Snake::moveUp() {
+  if (head->y <= 0) {
+    return;
+  }
+  Piece *next = head;
+  while(head->next != nullptr) {
+    next = head->next;
+  }
 
-void Snake::moveDown() {}
+  next->y = head->y - 1;
+  if (head != next){
+    head = next;
+  }
 
-void Snake::moveLeft() {}
+}
+
+void Snake::moveDown() {
+  if (head->y + 1 >= GRID_Y) {
+    return;
+  }
+  Piece *next = head;
+  while(head->next != nullptr) {
+    next = head->next;
+  }
+
+  next->y = head->y + 1;
+  if (head != next){
+    head = next;
+  }
+}
+
+void Snake::moveLeft() {
+  if (head->x <= 0) {
+    return;
+  }
+  Piece *next = head;
+  while(head->next != nullptr) {
+    next = head->next;
+  }
+
+  next->x = head->x - 1;
+  if (head != next){
+    head = next;
+  }
+}
 
 void Snake::moveRight() {
-  Piece *last = head;
-  while(head->prev != nullptr) {
-    std::cout << "Loop" << std::endl;
-    last = head->prev;
+  if (head->x + 1 >= GRID_X) {
+    return;
   }
-  std::cout << "x: " << head->x << std::endl
-            << "y: " << head->y << std::endl
-            << head << std::endl
-            << last << std::endl;
+  Piece *next = head;
+  while(head->next != nullptr) {
+    next = head->next;
+  }
 
-  last->x = head->x + 1;
-  if (head!=last){
-    head = last;
+  next->x = head->x + 1;
+  if (head != next){
+    head = next;
   }
 };

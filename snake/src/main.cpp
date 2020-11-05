@@ -1,25 +1,27 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
-#include <iostream>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_timer.h>
+#include <SDL2/SDL_ttf.h>
 #include <cstring>
+#include <iostream>
 #include <map>
 
-#include "config.hpp"
+#include "Snake.hpp"
 #include "assets.hpp"
+#include "config.hpp"
 #include "enums.hpp"
 #include "media.hpp"
-#include "Snake.hpp"
 
 typedef struct {
-    SDL_Renderer *renderer;
-    SDL_Window *window;
-    SDL_Surface *screen;
-    SDL_Texture *textures[TEXTURE_TOTAL];
-    SDL_Surface *images[IMAGE_TOTAL];
-    SDL_Event event;
-    bool exit = false;
+  SDL_Renderer *renderer;
+  SDL_Window *window;
+  SDL_Surface *screen;
+  SDL_Texture *textures[TEXTURE_TOTAL];
+  SDL_Surface *images[IMAGE_TOTAL];
+  SDL_Event event;
+  bool exit = false;
 } App;
 
 auto app = App{};
@@ -28,7 +30,8 @@ auto app = App{};
 bool init() {
   // Initialize SDL
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-    std::cout << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
+    std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError()
+              << std::endl;
     return false;
   }
 
@@ -37,27 +40,29 @@ bool init() {
                                 SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH,
                                 SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
   if (app.window == NULL) {
-    std::cout << "Window could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+    std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError()
+              << std::endl;
     return false;
   }
 
   app.renderer = SDL_CreateRenderer(app.window, -1, SDL_RENDERER_ACCELERATED);
   if (app.renderer == NULL) {
-    std::cout << "Renderer could not be created! SDL_Error: " << SDL_GetError() << std::endl;
+    std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError()
+              << std::endl;
     return false;
   }
 
   // Initialize PNG loading
   int imgFlags = IMG_INIT_PNG;
   if (!(IMG_Init(imgFlags) & imgFlags)) {
-    std::cerr << "SDL_image could not initialize! SDL_image Error: " <<
-      IMG_GetError() << std::endl;
+    std::cerr << "SDL_image could not initialize! SDL_image Error: "
+              << IMG_GetError() << std::endl;
     return false;
   }
 
-  if (TTF_Init() < 0){
-    std::cerr << "SDL_ttf could not initialize! SDL_ttf Error: " <<
-      TTF_GetError() << std::endl;
+  if (TTF_Init() < 0) {
+    std::cerr << "SDL_ttf could not initialize! SDL_ttf Error: "
+              << TTF_GetError() << std::endl;
     return false;
   }
 
@@ -91,7 +96,6 @@ void close() {
   SDL_Quit();
 }
 
-
 void handleEvent(Snake *snake) {
   if (app.event.type == SDL_KEYDOWN) {
     switch (app.event.key.keysym.sym) {
@@ -99,12 +103,27 @@ void handleEvent(Snake *snake) {
       snake->go(Direction::UP);
       break;
     case SDLK_DOWN:
+      snake->go(Direction::DOWN);
       break;
     case SDLK_LEFT:
+      snake->go(Direction::LEFT);
       break;
     case SDLK_RIGHT:
+      snake->go(Direction::RIGHT);
       break;
     }
+  }
+}
+
+void drawGrid() {
+  SDL_SetRenderDrawColor(app.renderer, 0x20, 0x20, 0x20, 0x00);
+  for (int i = 1; i < GRID_Y; i++) {
+    SDL_RenderDrawLine(app.renderer, 0, CELL_HEIGHT * i, GRID_X * CELL_WIDTH,
+                       CELL_HEIGHT * i);
+  }
+  for (int i = 1; i < GRID_X; i++) {
+    SDL_RenderDrawLine(app.renderer, CELL_WIDTH * i, 0, CELL_WIDTH * i,
+                       GRID_Y * CELL_HEIGHT);
   }
 }
 
@@ -112,6 +131,7 @@ void loop() {
   Snake snake;
 
   Uint32 starttime;
+  Uint32 endtime;
   Uint32 deltatime;
   while (!app.exit) {
     starttime = SDL_GetTicks();
@@ -123,24 +143,30 @@ void loop() {
         handleEvent(&snake);
       }
     }
-    snake.move();
-    
+
+    snake.move(starttime - endtime);
+
     SDL_SetRenderDrawColor(app.renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(app.renderer);
 
+    drawGrid();
+
     SDL_SetRenderDrawColor(app.renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
     SDL_Rect pieceSquare;
+    pieceSquare.h = CELL_HEIGHT;
+    pieceSquare.w = CELL_WIDTH;
     auto pieces = snake.getPieces();
 
-    for (int i = 0; i < sizeof(pieces)/sizeof(pieces[0]); i++) {
-      pieceSquare.x = pieces[i][0];
-      pieceSquare.y = pieces[i][1];
+    for (int i = 0; i < sizeof(pieces) / sizeof(pieces[0]); i++) {
+      pieceSquare.x = pieces[i][0] * CELL_WIDTH;
+      pieceSquare.y = pieces[i][1] * CELL_HEIGHT;
+      SDL_RenderFillRect(app.renderer, &pieceSquare);
     }
 
-    std::cout << "after rect set" << std::endl;
-    
     SDL_RenderPresent(app.renderer);
-    deltatime = SDL_GetTicks() - starttime;
+    endtime = SDL_GetTicks();
+    deltatime = endtime - starttime;
     if (deltatime <= (1000 / FPS)) {
       SDL_Delay((1000 / FPS) - deltatime);
     }
@@ -166,7 +192,7 @@ int main(int argc, char *args[]) {
   }
 
   loop();
-
   close();
+
   return 0;
 }

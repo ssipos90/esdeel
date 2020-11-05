@@ -2,7 +2,7 @@ APP=esdeel02
 
 CXX      = clang++
 LIBS     = -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lpthread
-CXXFLAGS =  -std=c++17 -Wall -Wc++17-extensions
+CXXFLAGS =  -std=c++17 -Wall -Wc++17-extensions -MD
 LDFLAGS  = $(CXXFLAGS) $(LIBS) -L./lib
 
 # Folders
@@ -26,4 +26,3 @@ clean:
 	$(RM) build/obj/* build/bin/*
 
 .PHONY: all clean
-

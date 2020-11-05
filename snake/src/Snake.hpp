@@ -1,9 +1,10 @@
 #pragma once
 
+#include <SDL2/SDL_stdinc.h>
+#include <iostream>
 #include "config.hpp"
 #include "enums.hpp"
 #include "structs.hpp"
-#include <iostream>
 
 struct Piece {
   unsigned x;
@@ -20,14 +21,16 @@ public:
 
   void go(Direction dir);
 
-  void move();
+  void move(const Uint32 deltatime);
   
   unsigned** getPieces();
 
 private:
   Direction direction = Direction::RIGHT;
-  int vel = 10;
+  const int max_speed = 1000;
+  int vel = 100;
   int clen = 1;
+  int dt = 0;
   Piece *head;
   Piece tail[GRID_SIZE];
 
@@ -36,4 +39,3 @@ private:
   void moveLeft();
   void moveRight();
 };
-

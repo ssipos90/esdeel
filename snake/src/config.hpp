@@ -2,9 +2,9 @@
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
-#define GRID_X 20
-#define GRID_Y 16
+#define GRID_X 40
+#define GRID_Y 30
 #define GRID_SIZE GRID_X * GRID_Y
-#define CELL_WIDTH SCREEN_WIDTH / GRID_X 
+#define CELL_WIDTH SCREEN_WIDTH / GRID_X
 #define CELL_HEIGHT SCREEN_HEIGHT / GRID_Y
 #define FPS 60
