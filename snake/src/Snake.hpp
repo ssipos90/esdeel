@@ -1,10 +1,10 @@
 #pragma once
 
-#include <SDL2/SDL_stdinc.h>
-#include <iostream>
 #include "config.hpp"
 #include "enums.hpp"
 #include "structs.hpp"
+#include <SDL2/SDL_stdinc.h>
+#include <iostream>
 
 struct Piece {
   unsigned x;
@@ -17,13 +17,13 @@ class Snake {
   static const int acc = 1;
 
 public:
-  Snake ();
+  Snake();
 
   void go(Direction dir);
 
   void move(const Uint32 deltatime);
-  
-  unsigned** getPieces();
+
+  unsigned **getPieces();
 
 private:
   Direction direction = Direction::RIGHT;
@@ -34,8 +34,8 @@ private:
   Piece *head;
   Piece tail[GRID_SIZE];
 
-  void moveUp();
-  void moveDown();
-  void moveLeft();
-  void moveRight();
+  void moveUp(Piece *next);
+  void moveDown(Piece *next);
+  void moveLeft(Piece *next);
+  void moveRight(Piece *next);
 };
