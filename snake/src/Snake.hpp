@@ -6,12 +6,12 @@
 #include <SDL2/SDL_stdinc.h>
 #include <iostream>
 
-struct Piece {
+typedef struct Piece {
   unsigned x;
   unsigned y;
   Piece *prev = nullptr;
   Piece *next = nullptr;
-};
+} Piece;
 
 class Snake {
   static const int acc = 1;
@@ -26,16 +26,12 @@ public:
   unsigned **getPieces();
 
 private:
-  Direction direction = Direction::RIGHT;
-  const int max_speed = 1000;
+  Direction direction;
+  Direction tempDirection = Direction::RIGHT;
+  int velStep = 10;
   int vel = 100;
   int clen = 1;
   int dt = 0;
   Piece *head;
   Piece tail[GRID_SIZE];
-
-  void moveUp(Piece *next);
-  void moveDown(Piece *next);
-  void moveLeft(Piece *next);
-  void moveRight(Piece *next);
 };

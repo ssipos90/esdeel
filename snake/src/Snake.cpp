@@ -36,7 +36,7 @@ void Snake::go(Direction dir) {
 
   std::cout << "Direction changed: " << std::endl;
 
-  direction = dir;
+  tempDirection = dir;
 }
 
 void Snake::move(const Uint32 deltatime) {
@@ -44,10 +44,11 @@ void Snake::move(const Uint32 deltatime) {
   if (dt < 100000 / vel) {
     return;
   }
-
-  vel += 10;
+  direction = tempDirection;
 
   dt = 0;
+  vel = velStep * clen + 100;
+
   Piece *next = head;
   while (head->next != nullptr) {
     next = head->next;
@@ -55,22 +56,20 @@ void Snake::move(const Uint32 deltatime) {
 
   switch (direction) {
   case Direction::UP:
-    std::cout << "up" << std::endl;
-    moveUp(next);
+    next->y = head->y <= 0 ? GRID_Y - 1 : head->y - 1;
     break;
   case Direction::DOWN:
-    std::cout << "down" << std::endl;
-    moveDown(next);
+    next->y = head->y + 1 >= GRID_Y ? 0 : head->y + 1;
     break;
   case Direction::LEFT:
-    std::cout << "left" << std::endl;
-    moveLeft(next);
+    next->x = head->x <= 0 ? GRID_X : head->x - 1;
     break;
   case Direction::RIGHT:
-    std::cout << "right" << std::endl;
-    moveRight(next);
+    next->x = head->x + 1 >= GRID_X ? 0 : head->x + 1;
     break;
   }
+
+
   if (head != next) {
     head = next;
   }
@@ -87,23 +86,3 @@ unsigned **Snake::getPieces() {
 
   return pieces;
 }
-
-void Snake::moveUp(Piece *next) {
-  next->y = head->y <= 0 ? GRID_Y - 1 : head->y - 1;
-}
-
-void Snake::moveDown(Piece *next) {
-  int nextY = head->y + 1;
-
-  next->y = nextY >= GRID_Y ? 0 : nextY;
-}
-
-void Snake::moveLeft(Piece *next) {
-  next->x = head->x <= 0 ? GRID_X : head->x - 1;
-}
-
-void Snake::moveRight(Piece *next) {
-  int nextX = head->x + 1;
-
-  next->x = nextX >= GRID_X ? 0 : nextX;
-};

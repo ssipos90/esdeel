@@ -129,6 +129,7 @@ void drawGrid() {
 
 void loop() {
   Snake snake;
+  SDL_Rect pieceSquare;
 
   Uint32 starttime;
   Uint32 endtime;
@@ -153,7 +154,6 @@ void loop() {
 
     SDL_SetRenderDrawColor(app.renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
-    SDL_Rect pieceSquare;
     pieceSquare.h = CELL_HEIGHT;
     pieceSquare.w = CELL_WIDTH;
     auto pieces = snake.getPieces();
