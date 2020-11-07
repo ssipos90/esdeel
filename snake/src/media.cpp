@@ -1,16 +1,17 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
-#include <iostream>
+#include <stdio.h>
 
-#include "media.hpp"
-#include "enums.hpp"
+#include "./media.hpp"
+#include "./enums.hpp"
 
 SDL_Surface *loadImage(std::string path) {
-  SDL_Surface *surface = IMG_Load(path.c_str());
+  auto _path = path.c_str();
+  SDL_Surface *surface = IMG_Load(_path);
   if (surface == NULL) {
-    std::cout << "Unable to load image " << path
-              << "! SDL_image Error: " << IMG_GetError() << std::endl;
+    fprintf(stderr, "unable to load image %s. IMG_Error: %s\n", _path, IMG_GetError());
+    exit(1);
   }
 
   return surface;
@@ -41,8 +42,8 @@ SDL_Surface *loadOptimizedImage(SDL_PixelFormat *format, std::string path) {
   SDL_FreeSurface(loadedSurface);
 
   if (optimizedSurface == NULL) {
-    std::cout << "Unable to optimize image " << path
-              << "! SDL Error: " << SDL_GetError() << std::endl;
+    fprintf(stderr, "unable to optimize image %s. IMG_Error: %s\n", path.c_str(), SDL_GetError());
+    exit(2);
   }
 
   return optimizedSurface;
@@ -76,7 +77,7 @@ SDL_Texture *convertToTexture(SDL_Renderer *renderer, SDL_Surface *surface) {
   auto texture = SDL_CreateTextureFromSurface(renderer, surface);
 
   if (texture == NULL) {
-    std::cout << "Unable to create texture! SDL Error: " << SDL_GetError() << std::endl;
+    fprintf(stderr, "unable to create texture. SDL_Error: %s\n", SDL_GetError());
   }
 
   return texture;

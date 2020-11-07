@@ -4,15 +4,14 @@
 #include <SDL2/SDL_render.h>
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_ttf.h>
-#include <cstring>
-#include <iostream>
-#include <map>
+#include <SDL2/SDL_video.h>
+#include <stdlib.h>
 
-#include "Snake.hpp"
-#include "assets.hpp"
-#include "config.hpp"
-#include "enums.hpp"
-#include "media.hpp"
+#include "./Snake.hpp"
+#include "./config.hpp"
+#include "./enums.hpp"
+#include "./errors.hpp"
+#include "./media.hpp"
 
 typedef struct {
   SDL_Renderer *renderer;
@@ -27,48 +26,35 @@ typedef struct {
 auto app = App{};
 
 // Starts up SDL and creates window
-bool init() {
+void init() {
   // Initialize SDL
-  if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-    std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError()
-              << std::endl;
-    return false;
-  }
+  scc(SDL_Init(SDL_INIT_VIDEO), "initialize");
 
   // Create window
-  app.window = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED,
-                                SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH,
-                                SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-  if (app.window == NULL) {
-    std::cerr << "Window could not be created! SDL_Error: " << SDL_GetError()
-              << std::endl;
-    return false;
-  }
+  app.window = (SDL_Window *)scp(
+      SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED,
+                       SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT,
+                       SDL_WINDOW_SHOWN),
+      "create window");
 
-  app.renderer = SDL_CreateRenderer(app.window, -1, SDL_RENDERER_ACCELERATED);
-  if (app.renderer == NULL) {
-    std::cerr << "Renderer could not be created! SDL_Error: " << SDL_GetError()
-              << std::endl;
-    return false;
-  }
+  app.renderer = (SDL_Renderer *)scp(
+      SDL_CreateRenderer(app.window, -1, SDL_RENDERER_ACCELERATED),
+      "create renderer");
 
   // Initialize PNG loading
   int imgFlags = IMG_INIT_PNG;
   if (!(IMG_Init(imgFlags) & imgFlags)) {
-    std::cerr << "SDL_image could not initialize! SDL_image Error: "
-              << IMG_GetError() << std::endl;
-    return false;
+    fprintf(stderr, "IMG_GetError (initialize): %s\n", IMG_GetError());
+    exit(1);
   }
 
   if (TTF_Init() < 0) {
-    std::cerr << "SDL_ttf could not initialize! SDL_ttf Error: "
-              << TTF_GetError() << std::endl;
-    return false;
+    fprintf(stderr, "TTF_GetError (initialize): %s\n", TTF_GetError());
+    exit(1);
   }
 
   // Get window surface
-  app.screen = SDL_GetWindowSurface(app.window);
-  return true;
+  app.screen = (SDL_Surface *) scp(SDL_GetWindowSurface(app.window), "create surface");
 }
 
 // Frees media and shuts down SDL
@@ -175,10 +161,7 @@ void loop() {
 
 int main(int argc, char *args[]) {
   // Start up SDL and create window
-  if (!init()) {
-    printf("Failed to initialize!\n");
-    return 1;
-  }
+  init();
 
   // Load media
   if (!loadImages(app.screen->format, app.images)) {
@@ -192,6 +175,7 @@ int main(int argc, char *args[]) {
   }
 
   loop();
+
   close();
 
   return 0;

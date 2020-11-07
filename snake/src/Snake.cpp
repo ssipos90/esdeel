@@ -1,7 +1,6 @@
-#include "Snake.hpp"
-#include "config.hpp"
 #include <SDL2/SDL_stdinc.h>
-#include <iostream>
+#include "./Snake.hpp"
+#include "./config.hpp"
 
 Snake::Snake() {
   for (int i = 1; i < GRID_SIZE - 1; i++) {
@@ -30,11 +29,8 @@ void Snake::go(Direction dir) {
       (direction == Direction::DOWN && dir == Direction::UP) ||
       (direction == Direction::RIGHT && dir == Direction::LEFT) ||
       (direction == Direction::LEFT && dir == Direction::RIGHT)) {
-    std::cerr << "cannot go in opposite direction" << std::endl;
     return;
   }
-
-  std::cout << "Direction changed: " << std::endl;
 
   tempDirection = dir;
 }

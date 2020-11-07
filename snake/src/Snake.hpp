@@ -1,10 +1,8 @@
 #pragma once
 
-#include "config.hpp"
-#include "enums.hpp"
-#include "structs.hpp"
 #include <SDL2/SDL_stdinc.h>
-#include <iostream>
+#include "./config.hpp"
+#include "./enums.hpp"
 
 typedef struct Piece {
   unsigned x;
