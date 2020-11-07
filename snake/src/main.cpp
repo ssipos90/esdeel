@@ -11,7 +11,7 @@
 #include "./config.hpp"
 #include "./enums.hpp"
 #include "./errors.hpp"
-#include "./media.hpp"
+//#include "./media.hpp"
 
 typedef struct {
   SDL_Renderer *renderer;
@@ -164,15 +164,15 @@ int main(int argc, char *args[]) {
   init();
 
   // Load media
-  if (!loadImages(app.screen->format, app.images)) {
-    printf("Failed to load media!\n");
-    return 2;
-  }
+  // if (!loadImages(app.screen->format, app.images)) {
+  //   printf("Failed to load media!\n");
+  //   return 2;
+  // }
 
-  if (!loadTextures(app.renderer, app.textures)) {
-    printf("Failed to load media!\n");
-    return 2;
-  }
+  // if (!loadTextures(app.renderer, app.textures)) {
+  //   printf("Failed to load media!\n");
+  //   return 2;
+  // }
 
   loop();
 
