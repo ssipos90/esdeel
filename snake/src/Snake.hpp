@@ -5,8 +5,8 @@
 #include "./enums.hpp"
 
 typedef struct Piece {
-  unsigned x;
-  unsigned y;
+  int x;
+  int y;
   Piece *prev = nullptr;
   Piece *next = nullptr;
 } Piece;
@@ -21,7 +21,7 @@ public:
 
   void move(const Uint32 deltatime);
 
-  unsigned **getPieces();
+  int **getPieces();
 
 private:
   Direction direction;

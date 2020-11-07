@@ -58,25 +58,26 @@ void Snake::move(const Uint32 deltatime) {
     next->y = head->y + 1 >= GRID_Y ? 0 : head->y + 1;
     break;
   case Direction::LEFT:
-    next->x = head->x <= 0 ? GRID_X : head->x - 1;
+    next->x = head->x <= 0 ? GRID_X - 1 : head->x - 1;
     break;
   case Direction::RIGHT:
     next->x = head->x + 1 >= GRID_X ? 0 : head->x + 1;
     break;
   }
 
+  fprintf(stdout, "pos: %3d %3d\n", next->x, next->y);
 
   if (head != next) {
     head = next;
   }
 }
 
-unsigned **Snake::getPieces() {
-  unsigned **pieces = new unsigned *[clen];
+int **Snake::getPieces() {
+  int **pieces = new int *[clen];
   int i = 0;
   Piece *p = head;
   do {
-    pieces[i++] = new unsigned[2]{p->x, p->y};
+    pieces[i++] = new int[2]{p->x, p->y};
     p = p->next;
   } while (p != nullptr);
 
