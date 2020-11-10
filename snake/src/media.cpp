@@ -1,7 +1,7 @@
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "./media.hpp"
 #include "./enums.hpp"
@@ -34,7 +34,7 @@ bool loadImages(SDL_PixelFormat *format, SDL_Surface *_images[]) {
 SDL_Surface *loadOptimizedImage(SDL_PixelFormat *format, std::string path) {
   auto loadedSurface = loadImage(path);
   if (loadedSurface == NULL) {
-      return NULL;
+    return NULL;
   }
 
   auto optimizedSurface = SDL_ConvertSurface(loadedSurface, format, 0);
@@ -42,7 +42,7 @@ SDL_Surface *loadOptimizedImage(SDL_PixelFormat *format, std::string path) {
   SDL_FreeSurface(loadedSurface);
 
   if (optimizedSurface == NULL) {
-    fprintf(stderr, "unable to optimize image %s. IMG_Error: %s\n", path.c_str(), SDL_GetError());
+    fprintf(stderr, "unable to optimize surface %s. SDL_Error: %s\n", path.c_str(), SDL_GetError());
     exit(2);
   }
 
@@ -78,6 +78,7 @@ SDL_Texture *convertToTexture(SDL_Renderer *renderer, SDL_Surface *surface) {
 
   if (texture == NULL) {
     fprintf(stderr, "unable to create texture. SDL_Error: %s\n", SDL_GetError());
+    exit(2);
   }
 
   return texture;

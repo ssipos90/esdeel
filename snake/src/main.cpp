@@ -2,18 +2,22 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_render.h>
+#include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_video.h>
+#include <cstring>
+#include <map>
+#include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
+#include "./sdl_helper.hpp"
 #include "./Snake.hpp"
 #include "./config.hpp"
 #include "./enums.hpp"
-#include "./errors.hpp"
-//#include "./media.hpp"
+#include "./media.hpp"
 
-typedef struct {
+typedef struct App {
   SDL_Renderer *renderer;
   SDL_Window *window;
   SDL_Surface *screen;
@@ -28,7 +32,7 @@ auto app = App{};
 // Starts up SDL and creates window
 void init() {
   // Initialize SDL
-  scc(SDL_Init(SDL_INIT_VIDEO), "initialize");
+  scc(SDL_Init(SDL_INIT_VIDEO), "initialize SDL");
 
   // Create window
   app.window = (SDL_Window *)scp(
@@ -41,7 +45,6 @@ void init() {
       SDL_CreateRenderer(app.window, -1, SDL_RENDERER_ACCELERATED),
       "create renderer");
 
-  // Initialize PNG loading
   int imgFlags = IMG_INIT_PNG;
   if (!(IMG_Init(imgFlags) & imgFlags)) {
     fprintf(stderr, "IMG_GetError (initialize): %s\n", IMG_GetError());
@@ -53,7 +56,6 @@ void init() {
     exit(1);
   }
 
-  // Get window surface
   app.screen = (SDL_Surface *) scp(SDL_GetWindowSurface(app.window), "create surface");
 }
 
@@ -113,13 +115,38 @@ void drawGrid() {
   }
 }
 
+class Food {
+public:
+  void respawn(int **pieces) {
+    do {
+      x = rand() % GRID_X;
+      y = random() % GRID_Y;
+    } while (isColliding(pieces));
+  }
+
+private:
+  int x;
+  int y;
+  bool isColliding(int **pieces) {
+    for (int i = 0; i < sizeof(pieces) / sizeof(pieces[0]); i++) {
+      if (pieces[i][0] == x && pieces[i][1] == y) {
+        return true;
+      }
+    }
+    return false;
+  }
+};
+
 void loop() {
+  srand(time(0));
+
   Snake snake;
-  SDL_Rect pieceSquare;
+  SDL_Rect pieceSquare = {0, 0, CELL_WIDTH, CELL_HEIGHT};
 
   Uint32 starttime;
   Uint32 endtime;
   Uint32 deltatime;
+  Food food;
   while (!app.exit) {
     starttime = SDL_GetTicks();
     while (SDL_PollEvent(&app.event) != 0) {
@@ -132,6 +159,10 @@ void loop() {
     }
 
     snake.move(starttime - endtime);
+    auto pieces = snake.getPieces();
+    auto foodPosition = food.getPosition();
+    if (pieces[0][0] == foodPosition[0])
+    food.respawn(pieces);
 
     SDL_SetRenderDrawColor(app.renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(app.renderer);
@@ -139,10 +170,6 @@ void loop() {
     drawGrid();
 
     SDL_SetRenderDrawColor(app.renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-
-    pieceSquare.h = CELL_HEIGHT;
-    pieceSquare.w = CELL_WIDTH;
-    auto pieces = snake.getPieces();
 
     for (int i = 0; i < sizeof(pieces) / sizeof(pieces[0]); i++) {
       pieceSquare.x = pieces[i][0] * CELL_WIDTH;

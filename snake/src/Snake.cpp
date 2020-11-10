@@ -52,7 +52,7 @@ void Snake::move(const Uint32 deltatime) {
 
   switch (direction) {
   case Direction::UP:
-    next->y = head->y <= 0 ? GRID_Y - 1 : head->y - 1;
+    next->y = head->y - 1 < 0 ? GRID_Y - 1 : head->y - 1;
     break;
   case Direction::DOWN:
     next->y = head->y + 1 >= GRID_Y ? 0 : head->y + 1;
