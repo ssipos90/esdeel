@@ -19,3 +19,7 @@ enum ResourceTextures {
 
 enum class Direction { UP, DOWN, LEFT, RIGHT };
 
+typedef struct Position {
+  int x;
+  int y;
+} Position;

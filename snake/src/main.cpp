@@ -12,9 +12,9 @@
 #include <time.h>
 
 #include "./sdl_helper.hpp"
-#include "./Snake.hpp"
+#include "./Game.hpp"
 #include "./config.hpp"
-#include "./enums.hpp"
+#include "./types.hpp"
 #include "./media.hpp"
 
 typedef struct App {
@@ -84,24 +84,6 @@ void close() {
   SDL_Quit();
 }
 
-void handleEvent(Snake *snake) {
-  if (app.event.type == SDL_KEYDOWN) {
-    switch (app.event.key.keysym.sym) {
-    case SDLK_UP:
-      snake->go(Direction::UP);
-      break;
-    case SDLK_DOWN:
-      snake->go(Direction::DOWN);
-      break;
-    case SDLK_LEFT:
-      snake->go(Direction::LEFT);
-      break;
-    case SDLK_RIGHT:
-      snake->go(Direction::RIGHT);
-      break;
-    }
-  }
-}
 
 void drawGrid() {
   SDL_SetRenderDrawColor(app.renderer, 0x20, 0x20, 0x20, 0x00);
@@ -115,38 +97,16 @@ void drawGrid() {
   }
 }
 
-class Food {
-public:
-  void respawn(int **pieces) {
-    do {
-      x = rand() % GRID_X;
-      y = random() % GRID_Y;
-    } while (isColliding(pieces));
-  }
-
-private:
-  int x;
-  int y;
-  bool isColliding(int **pieces) {
-    for (int i = 0; i < sizeof(pieces) / sizeof(pieces[0]); i++) {
-      if (pieces[i][0] == x && pieces[i][1] == y) {
-        return true;
-      }
-    }
-    return false;
-  }
-};
 
 void loop() {
   srand(time(0));
 
-  Snake snake;
   SDL_Rect pieceSquare = {0, 0, CELL_WIDTH, CELL_HEIGHT};
 
   Uint32 starttime;
   Uint32 endtime;
   Uint32 deltatime;
-  Food food;
+  Game *game = new Game();
   while (!app.exit) {
     starttime = SDL_GetTicks();
     while (SDL_PollEvent(&app.event) != 0) {
@@ -154,22 +114,22 @@ void loop() {
         app.exit = true;
         break;
       } else {
-        handleEvent(&snake);
+        game->handleEvent(app.event);
       }
     }
 
-    snake.move(starttime - endtime);
-    auto pieces = snake.getPieces();
-    auto foodPosition = food.getPosition();
-    if (pieces[0][0] == foodPosition[0])
-    food.respawn(pieces);
+    game->progress(starttime - endtime);
+
 
     SDL_SetRenderDrawColor(app.renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(app.renderer);
 
     drawGrid();
 
+    // TODO extract to video renderer disco video->render(game); or smt
     SDL_SetRenderDrawColor(app.renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
+    const auto pieces = game->getPieces();
 
     for (int i = 0; i < sizeof(pieces) / sizeof(pieces[0]); i++) {
       pieceSquare.x = pieces[i][0] * CELL_WIDTH;

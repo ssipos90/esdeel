@@ -1,4 +1,5 @@
 #include <SDL2/SDL_stdinc.h>
+#include <vector>
 #include "./Snake.hpp"
 #include "./config.hpp"
 
@@ -72,12 +73,13 @@ void Snake::move(const Uint32 deltatime) {
   }
 }
 
-int **Snake::getPieces() {
-  int **pieces = new int *[clen];
-  int i = 0;
+std::vector<Position> Snake::getPieces() {
+  std::vector<Position> pieces;
   Piece *p = head;
   do {
-    pieces[i++] = new int[2]{p->x, p->y};
+    pieces.push_back(
+      Position{p->x, p->y}
+    );
     p = p->next;
   } while (p != nullptr);
 

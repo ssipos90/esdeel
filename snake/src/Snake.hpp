@@ -1,8 +1,9 @@
 #pragma once
 
+#include <vector>
 #include <SDL2/SDL_stdinc.h>
 #include "./config.hpp"
-#include "./enums.hpp"
+#include "./types.hpp"
 
 typedef struct Piece {
   int x;
@@ -21,7 +22,7 @@ public:
 
   void move(const Uint32 deltatime);
 
-  int **getPieces();
+  std::vector<Position> getPieces();
 
 private:
   Direction direction;

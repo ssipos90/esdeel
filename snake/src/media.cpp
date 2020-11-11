@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #include "./media.hpp"
-#include "./enums.hpp"
+#include "./types.hpp"
 
 SDL_Surface *loadImage(std::string path) {
   auto _path = path.c_str();
