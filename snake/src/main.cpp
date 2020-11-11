@@ -97,15 +97,13 @@ void drawGrid() {
   }
 }
 
-
 void loop() {
   srand(time(0));
-
   SDL_Rect pieceSquare = {0, 0, CELL_WIDTH, CELL_HEIGHT};
 
-  Uint32 starttime;
-  Uint32 endtime;
-  Uint32 deltatime;
+  uint32_t starttime;
+  uint32_t endtime = 0;
+  uint32_t deltatime;
   Game *game = new Game();
   while (!app.exit) {
     starttime = SDL_GetTicks();
@@ -114,26 +112,29 @@ void loop() {
         app.exit = true;
         break;
       } else {
-        game->handleEvent(app.event);
+        game->handleEvent(&app.event);
       }
     }
-
     game->progress(starttime - endtime);
-
-
     SDL_SetRenderDrawColor(app.renderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(app.renderer);
-
     drawGrid();
 
     // TODO extract to video renderer disco video->render(game); or smt
     SDL_SetRenderDrawColor(app.renderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
-    const auto pieces = game->getPieces();
+    // TODO have a class that renders the game state
+    Position p = game->getFoodPosition();
+    pieceSquare.x = p.x * CELL_WIDTH;
+    pieceSquare.y = p.y * CELL_HEIGHT;
+    SDL_SetRenderDrawColor(app.renderer, 0xFF, 0x33, 0x33, 0xFF);
+    SDL_RenderFillRect(app.renderer, &pieceSquare);
 
-    for (int i = 0; i < sizeof(pieces) / sizeof(pieces[0]); i++) {
-      pieceSquare.x = pieces[i][0] * CELL_WIDTH;
-      pieceSquare.y = pieces[i][1] * CELL_HEIGHT;
+    SDL_SetRenderDrawColor(app.renderer, 0x33, 0x33, 0xCC, 0xFF);
+    auto pieces = game->getSnakePieces();
+    for (const auto &piece: pieces) {
+      pieceSquare.x = piece.x * CELL_WIDTH;
+      pieceSquare.y = piece.y * CELL_HEIGHT;
       SDL_RenderFillRect(app.renderer, &pieceSquare);
     }
 

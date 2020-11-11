@@ -1,8 +1,18 @@
-#include <vector>
 #include "./Game.hpp"
 #include "./types.hpp"
+#include <vector>
 
-void Game::handleEvent(SDL_Event *event) {
+Game::Game() {
+  snake = new Snake();
+  food = new Food();
+}
+
+Game::~Game() {
+  delete snake;
+  delete food;
+}
+
+void Game::handleEvent(const SDL_Event *event) {
   if (event->type == SDL_KEYDOWN) {
     switch (event->key.keysym.sym) {
     case SDLK_UP:
@@ -21,18 +31,40 @@ void Game::handleEvent(SDL_Event *event) {
   }
 }
 
-void Game::progress(int deltatime) {
-    snake->move(deltatime);
-    
-    std::vector<Position> pieces = snake->getPieces();
-    auto foodPosition = food->getPosition();
-    bool respawnFood = false;
-    for (auto &piece: pieces) {
-        if (piece.x == foodPosition.x) {
-          respawnFood = true;
-        }
+void Game::progress(uint32_t deltatime) {
+  snake->move(deltatime);
+
+  std::vector<Position> pieces = snake->getPieces();
+  auto foodPosition = food->getPosition();
+  bool respawnFood = false;
+  for (auto &piece : pieces) {
+    if (piece.x == foodPosition.x && piece.y == foodPosition.y) {
+      respawnFood = true;
     }
-    if (respawnFood) {
-      food->respawn(&pieces);
+  }
+  if (respawnFood) {
+    moveFood(&pieces);
+  }
+}
+
+std::vector<Position> Game::getSnakePieces() { return snake->getPieces(); }
+
+Position Game::getFoodPosition() { return food->getPosition(); }
+
+void Game::moveFood(const std::vector<Position> *occupied) {
+  Position p;
+  do {
+    p.x = rand() % GRID_X;
+    p.y = rand() % GRID_Y;
+  } while (isColliding(occupied, &p));
+  food->move(&p);
+}
+
+bool Game::isColliding(const std::vector<Position> *occupied, Position *p) {
+  for (const auto &piece : *occupied) {
+    if (piece.x == p->x && piece.y == p->y) {
+      return true;
     }
+  }
+  return false;
 }

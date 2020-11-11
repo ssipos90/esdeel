@@ -7,13 +7,11 @@
 
 class Food {
 public:
-  void respawn(const std::vector<Position> *occupied);
   Position getPosition();
+  void move(const Position *p);
 
 private:
-  int x;
-  int y;
-  bool isColliding(const std::vector<Position> *occupied);
+  Position pos;
 };
 
 #endif // FOOD

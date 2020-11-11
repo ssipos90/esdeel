@@ -1,4 +1,3 @@
-#include <SDL2/SDL_stdinc.h>
 #include <vector>
 #include "./Snake.hpp"
 #include "./config.hpp"
@@ -36,9 +35,9 @@ void Snake::go(Direction dir) {
   tempDirection = dir;
 }
 
-void Snake::move(const Uint32 deltatime) {
+void Snake::move(uint32_t deltatime) {
   dt += deltatime;
-  if (dt < 100000 / vel) {
+  if (dt < t / vel) {
     return;
   }
   direction = tempDirection;
@@ -65,8 +64,6 @@ void Snake::move(const Uint32 deltatime) {
     next->x = head->x + 1 >= GRID_X ? 0 : head->x + 1;
     break;
   }
-
-  fprintf(stdout, "pos: %3d %3d\n", next->x, next->y);
 
   if (head != next) {
     head = next;
