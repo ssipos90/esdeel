@@ -9,9 +9,7 @@
 
 class Game {
   public:
-  Game ();
-  ~Game ();
-
+  Game();
   void progress(uint32_t deltatime);
   void handleEvent(const SDL_Event *event);
 
@@ -19,8 +17,8 @@ class Game {
   Position getFoodPosition();
 
   private:
-  Snake *snake;
-  Food *food;
+  Snake snake;
+  Food food;
 
   void moveFood(const std::vector<Position> *occupied);
   bool isColliding(const std::vector<Position> *occupied, Position *p);

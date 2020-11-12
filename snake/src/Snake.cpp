@@ -3,21 +3,27 @@
 #include "./config.hpp"
 
 Snake::Snake() {
-  for (int i = 1; i < GRID_SIZE - 1; i++) {
-    tail[i].prev = &tail[i - 1];
-    tail[i].next = &tail[i + 1];
+  Piece *prev = nullptr;
+  Piece *current = nullptr;
+  for(int i = 0; i < initialLength; ++i) {
+    current = new Piece;
+    current->position.x = i;
+    current->position.y = 0;
+    current->prev = prev;
+    if (prev != nullptr) {
+      current->prev->next = current;
+    }
+    prev = current;
   }
+  head = current;
+};
 
-  head = &tail[0];
-
-  tail[0].x = 0;
-  tail[0].y = 0;
-  return;
-  tail[0].prev = &tail[GRID_SIZE - 1];
-  tail[0].next = &tail[1];
-
-  tail[GRID_SIZE - 1].prev = &tail[GRID_SIZE - 2];
-  tail[GRID_SIZE - 1].next = &tail[0];
+Snake::~Snake() {
+  Piece *next;
+  while (head->next != nullptr) {
+    next = head->next;
+    delete head;
+  }
 };
 
 void Snake::go(Direction dir) {
@@ -40,45 +46,60 @@ void Snake::move(uint32_t deltatime) {
   if (dt < t / vel) {
     return;
   }
+  dt = 0;
   direction = tempDirection;
 
-  dt = 0;
-  vel = velStep * clen + 100;
-
-  Piece *next = head;
-  while (head->next != nullptr) {
-    next = head->next;
-  }
+  Piece *next = new Piece();
+  next->position.x = head->position.x;
+  next->position.y = head->position.y;
+  next->prev = head;
+  head->next = next;
 
   switch (direction) {
   case Direction::UP:
-    next->y = head->y - 1 < 0 ? GRID_Y - 1 : head->y - 1;
+    next->position.y = next->position.y - 1 < 0 ? GRID_Y - 1 : head->position.y - 1;
     break;
   case Direction::DOWN:
-    next->y = head->y + 1 >= GRID_Y ? 0 : head->y + 1;
+    next->position.y = next->position.y + 1 >= GRID_Y ? 0 : next->position.y + 1;
     break;
   case Direction::LEFT:
-    next->x = head->x <= 0 ? GRID_X - 1 : head->x - 1;
+    next->position.x = next->position.x <= 0 ? GRID_X - 1 : next->position.x - 1;
     break;
   case Direction::RIGHT:
-    next->x = head->x + 1 >= GRID_X ? 0 : head->x + 1;
+    next->position.x = next->position.x + 1 >= GRID_X ? 0 : next->position.x + 1;
     break;
   }
 
-  if (head != next) {
-    head = next;
+  Piece *last = head;
+  while(last->prev != nullptr) {
+    last = last->prev;
   }
+
+  head = next;
+  if (last->grow) {
+    last->grow = false;
+  } else {
+    last->next->prev = nullptr;
+    delete last;
+  }
+};
+
+void Snake::eat() {
+  head->grow = true;
 }
 
 std::vector<Position> Snake::getPieces() {
   std::vector<Position> pieces;
-  Piece *p = head;
-  do {
-    pieces.push_back(
-      Position{p->x, p->y}
-    );
-    p = p->next;
-  } while (p != nullptr);
+
+  Piece *current = head;
+  while(current != nullptr) {
+    pieces.push_back(current->position);
+    current = current->prev;
+  }
 
   return pieces;
-}
+};
+
+Position Snake::getHead() {
+  return head->position;
+};

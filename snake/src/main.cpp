@@ -11,11 +11,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "./sdl_helper.hpp"
+#include "./Video.hpp"
 #include "./Game.hpp"
 #include "./config.hpp"
-#include "./types.hpp"
 #include "./media.hpp"
+#include "./sdl_helper.hpp"
+#include "./types.hpp"
 
 typedef struct App {
   SDL_Renderer *renderer;
@@ -56,7 +57,8 @@ void init() {
     exit(1);
   }
 
-  app.screen = (SDL_Surface *) scp(SDL_GetWindowSurface(app.window), "create surface");
+  app.screen =
+      (SDL_Surface *)scp(SDL_GetWindowSurface(app.window), "create surface");
 }
 
 // Frees media and shuts down SDL
@@ -84,27 +86,14 @@ void close() {
   SDL_Quit();
 }
 
-
-void drawGrid() {
-  SDL_SetRenderDrawColor(app.renderer, 0x20, 0x20, 0x20, 0x00);
-  for (int i = 1; i < GRID_Y; i++) {
-    SDL_RenderDrawLine(app.renderer, 0, CELL_HEIGHT * i, GRID_X * CELL_WIDTH,
-                       CELL_HEIGHT * i);
-  }
-  for (int i = 1; i < GRID_X; i++) {
-    SDL_RenderDrawLine(app.renderer, CELL_WIDTH * i, 0, CELL_WIDTH * i,
-                       GRID_Y * CELL_HEIGHT);
-  }
-}
-
 void loop() {
   srand(time(0));
-  SDL_Rect pieceSquare = {0, 0, CELL_WIDTH, CELL_HEIGHT};
 
   uint32_t starttime;
   uint32_t endtime = 0;
   uint32_t deltatime;
-  Game *game = new Game();
+  Game game;
+  Video video(app.renderer);
   while (!app.exit) {
     starttime = SDL_GetTicks();
     while (SDL_PollEvent(&app.event) != 0) {
@@ -112,33 +101,21 @@ void loop() {
         app.exit = true;
         break;
       } else {
-        game->handleEvent(&app.event);
+        game.handleEvent(&app.event);
       }
     }
-    game->progress(starttime - endtime);
-    SDL_SetRenderDrawColor(app.renderer, 0x00, 0x00, 0x00, 0x00);
-    SDL_RenderClear(app.renderer);
-    drawGrid();
 
-    // TODO extract to video renderer disco video->render(game); or smt
-    SDL_SetRenderDrawColor(app.renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+    // time spent since last renderer present
+    deltatime = starttime - endtime;
 
-    // TODO have a class that renders the game state
-    Position p = game->getFoodPosition();
-    pieceSquare.x = p.x * CELL_WIDTH;
-    pieceSquare.y = p.y * CELL_HEIGHT;
-    SDL_SetRenderDrawColor(app.renderer, 0xFF, 0x33, 0x33, 0xFF);
-    SDL_RenderFillRect(app.renderer, &pieceSquare);
+    // progress game stuff
+    game.progress(deltatime);
 
-    SDL_SetRenderDrawColor(app.renderer, 0x33, 0x33, 0xCC, 0xFF);
-    auto pieces = game->getSnakePieces();
-    for (const auto &piece: pieces) {
-      pieceSquare.x = piece.x * CELL_WIDTH;
-      pieceSquare.y = piece.y * CELL_HEIGHT;
-      SDL_RenderFillRect(app.renderer, &pieceSquare);
-    }
+    // draw game state
+    video.draw(&game);
 
     SDL_RenderPresent(app.renderer);
+
     endtime = SDL_GetTicks();
     deltatime = endtime - starttime;
     if (deltatime <= (1000 / FPS)) {
@@ -147,8 +124,11 @@ void loop() {
   }
 }
 
-int main(int argc, char *args[]) {
-  // Start up SDL and create window
+int main(int argc, char *argv[]) {
+  // silence the compiler
+  (void)argv[0];
+  (void)argc;
+
   init();
 
   // Load media
