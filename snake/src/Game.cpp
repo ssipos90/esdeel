@@ -26,8 +26,18 @@ void Game::handleEvent(const SDL_Event *event) {
   }
 }
 
+bool Game::isOver() {
+  return over;
+};
+
 void Game::progress(uint32_t deltatime) {
-  snake.move(deltatime);
+  if (over) {
+    return;
+  }
+  if (!snake.move(deltatime)) {
+    over = true;
+    return;
+  }
 
   std::vector<Position> pieces = snake.getPieces();
   auto foodPosition = food.getPosition();

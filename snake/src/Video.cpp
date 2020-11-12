@@ -6,26 +6,31 @@
 Video::Video(SDL_Renderer *renderer) : renderer(renderer) {}
 
 void Video::draw(Game *game) {
-  SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
-  SDL_RenderClear(renderer);
+  drawBackground();
 
   // drawGrid();
 
-  // TODO have a class that renders the game state
-  Position p = game->getFoodPosition();
-  pieceSquare.x = p.x * CELL_WIDTH + PADDING_X;
-  pieceSquare.y = p.y * CELL_HEIGHT + PADDING_Y;
-  SDL_SetRenderDrawColor(renderer, 0xFF, 0x33, 0x33, 0xFF);
-  SDL_RenderFillRect(renderer, &pieceSquare);
+  drawFood(game->getFoodPosition());
 
-  SDL_SetRenderDrawColor(renderer, 0x33, 0x33, 0xCC, 0xFF);
   auto pieces = game->getSnakePieces();
-  for (const auto &piece : pieces) {
+  drawSnake(&pieces);
+};
+
+void Video::drawSnake(const std::vector<Position> *pieces) {
+  SDL_SetRenderDrawColor(renderer, 0x33, 0x33, 0xCC, 0xFF);
+  for (const auto &piece: *pieces) {
     pieceSquare.x = piece.x * CELL_WIDTH + PADDING_X;
     pieceSquare.y = piece.y * CELL_HEIGHT + PADDING_Y;
     SDL_RenderFillRect(renderer, &pieceSquare);
   }
-};
+}
+
+void Video::drawFood(Position p) {
+  pieceSquare.x = p.x * CELL_WIDTH + PADDING_X;
+  pieceSquare.y = p.y * CELL_HEIGHT + PADDING_Y;
+  SDL_SetRenderDrawColor(renderer, 0xFF, 0x33, 0x33, 0xFF);
+  SDL_RenderFillRect(renderer, &pieceSquare);
+}
 
 void Video::drawGrid() {
   SDL_SetRenderDrawColor(renderer, 0x20, 0x20, 0x20, 0x00);
@@ -37,4 +42,9 @@ void Video::drawGrid() {
     SDL_RenderDrawLine(renderer, CELL_WIDTH * i, 0, CELL_WIDTH * i,
                        GRID_Y * CELL_HEIGHT);
   }
+}
+
+void Video::drawBackground() {
+  SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0x00, 0x00);
+  SDL_RenderClear(renderer);
 }

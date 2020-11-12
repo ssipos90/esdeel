@@ -15,8 +15,10 @@ class Game {
 
   std::vector<Position> getSnakePieces();
   Position getFoodPosition();
+  bool isOver();
 
   private:
+  bool over = false;
   Snake snake;
   Food food;
 

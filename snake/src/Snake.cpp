@@ -41,10 +41,10 @@ void Snake::go(Direction dir) {
   tempDirection = dir;
 }
 
-void Snake::move(uint32_t deltatime) {
+bool Snake::move(uint32_t deltatime) {
   dt += deltatime;
   if (dt < t / vel) {
-    return;
+    return true;
   }
   dt = 0;
   direction = tempDirection;
@@ -52,8 +52,6 @@ void Snake::move(uint32_t deltatime) {
   Piece *next = new Piece();
   next->position.x = head->position.x;
   next->position.y = head->position.y;
-  next->prev = head;
-  head->next = next;
 
   switch (direction) {
   case Direction::UP:
@@ -72,8 +70,14 @@ void Snake::move(uint32_t deltatime) {
 
   Piece *last = head;
   while(last->prev != nullptr) {
+    if (last->position.x == next->position.x && last->position.y == next->position.y) {
+      return false;
+    }
     last = last->prev;
   }
+
+  next->prev = head;
+  head->next = next;
 
   head = next;
   if (last->grow) {
@@ -82,6 +86,8 @@ void Snake::move(uint32_t deltatime) {
     last->next->prev = nullptr;
     delete last;
   }
+
+  return true;
 };
 
 void Snake::eat() {

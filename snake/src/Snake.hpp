@@ -21,7 +21,7 @@ public:
 
   void go(Direction dir);
 
-  void move(uint32_t deltatime);
+  bool move(uint32_t deltatime);
   std::vector<Position> getPieces();
   void eat();
   Position getHead();
