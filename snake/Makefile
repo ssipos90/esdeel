@@ -2,7 +2,8 @@ APP=esdeel02
 
 CXX      = clang++
 LIBS     = -lm -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lpthread
-CXXFLAGS =  -std=c++17 -Wall -Wc++17-extensions -MD -g
+DBGFLAGS = CXXFLAGS += -DDEBUG -g
+CXXFLAGS = -std=c++17 -Wc++17-extensions -Wall -Werror -Wextra -MD
 LDFLAGS  = $(CXXFLAGS) $(LIBS) -L./lib
 
 # Folders
@@ -19,7 +20,12 @@ $(BIN_DIR)/$(APP): $(OBJECTS)
 $(OBJECTS): $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
+all: $(BIN_DIR)/$(APP)
+
+debug: CXXFLAGS += -DDEBUG -g
+debug: $(BIN_DIR)/$(APP)
+
 clean:
 	$(RM) build/obj/* build/bin/*
 
-.PHONY: all clean
+.PHONY: clean all
