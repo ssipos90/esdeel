@@ -37,18 +37,11 @@ void Snake::go(Direction dir) {
       (direction == Direction::LEFT && dir == Direction::RIGHT)) {
     return;
   }
-
-  tempDirection = dir;
+  direction = dir;
 }
 
-bool Snake::move(uint32_t deltatime) {
-  dt += deltatime;
-  if (dt < t / vel) {
-    return true;
-  }
-  dt = 0;
-  direction = tempDirection;
-
+bool Snake::move(Direction dir) {
+  go(dir);
   Piece *next = new Piece();
   next->position.x = head->position.x;
   next->position.y = head->position.y;
@@ -92,6 +85,11 @@ bool Snake::move(uint32_t deltatime) {
 
 void Snake::eat() {
   head->grow = true;
+  vel += acc;
+}
+
+uint32_t Snake::getVel() {
+  return vel;
 }
 
 std::vector<Position> Snake::getPieces() {

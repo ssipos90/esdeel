@@ -14,23 +14,23 @@ typedef struct Piece {
 
 class Snake {
 public:
-  static const int acc = 1;
+  const static uint32_t t = 100000;
+  static const int acc = 30;
   static const int initialLength = 4;
   Snake();
   ~Snake();
 
-  void go(Direction dir);
-
-  bool move(uint32_t deltatime);
-  std::vector<Position> getPieces();
+  bool move(Direction dir);
   void eat();
+
+  std::vector<Position> getPieces();
   Position getHead();
+  uint32_t getVel();
 
 private:
-  const static uint32_t t = 100000;
-  Direction direction;
-  Direction tempDirection = Direction::RIGHT;
+  Direction direction = Direction::RIGHT;
   uint32_t vel = 1000;
-  uint32_t dt = 1;
   Piece *head;
+
+  void go(Direction dir);
 };

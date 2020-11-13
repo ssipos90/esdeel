@@ -11,47 +11,54 @@ void Game::handleEvent(const SDL_Event *event) {
   if (event->type == SDL_KEYDOWN) {
     switch (event->key.keysym.sym) {
     case SDLK_UP:
-      snake.go(Direction::UP);
+      direction = Direction::UP;
       break;
     case SDLK_DOWN:
-      snake.go(Direction::DOWN);
+      direction = Direction::DOWN;
       break;
     case SDLK_LEFT:
-      snake.go(Direction::LEFT);
+      direction = Direction::LEFT;
       break;
     case SDLK_RIGHT:
-      snake.go(Direction::RIGHT);
+      direction = Direction::RIGHT;
       break;
     }
   }
 }
 
-bool Game::isOver() {
-  return over;
-};
+bool Game::isOver() { return over; };
 
 void Game::progress(uint32_t deltatime) {
   if (over) {
     return;
   }
-  if (!snake.move(deltatime)) {
-    over = true;
+
+  uint32_t vel = snake.getVel();
+  dt += deltatime;
+  if (dt < snake.t / vel) {
     return;
   }
 
-  std::vector<Position> pieces = snake.getPieces();
-  auto foodPosition = food.getPosition();
-  bool respawnFood = false;
-  // TODO if for some reason, snake moves multiple positions per tick, then
-  // shit might skip a beat... oh well
-  for (auto &piece : pieces) {
-    if (piece.x == foodPosition.x && piece.y == foodPosition.y) {
-      snake.eat();
-      respawnFood = true;
+  int steps = ceil(dt / (snake.t / vel));
+  dt = 0;
+  for (int i = 0; i < steps; ++i) {
+    if (!snake.move(direction)) {
+      over = true;
+      return;
     }
-  }
-  if (respawnFood) {
-    moveFood(&pieces);
+
+    std::vector<Position> pieces = snake.getPieces();
+    auto foodPosition = food.getPosition();
+    bool respawnFood = false;
+    for (auto &piece : pieces) {
+      if (piece.x == foodPosition.x && piece.y == foodPosition.y) {
+        snake.eat();
+        respawnFood = true;
+      }
+    }
+    if (respawnFood) {
+      moveFood(&pieces);
+    }
   }
 }
 

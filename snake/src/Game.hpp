@@ -8,7 +8,7 @@
 #include "./Food.hpp"
 
 class Game {
-  public:
+public:
   Game();
   void progress(uint32_t deltatime);
   void handleEvent(const SDL_Event *event);
@@ -17,10 +17,12 @@ class Game {
   Position getFoodPosition();
   bool isOver();
 
-  private:
+private:
   bool over = false;
   Snake snake;
   Food food;
+  Direction direction = Direction::RIGHT;
+  uint32_t dt;
 
   void moveFood(const std::vector<Position> *occupied);
   bool isColliding(const std::vector<Position> *occupied, Position *p);
