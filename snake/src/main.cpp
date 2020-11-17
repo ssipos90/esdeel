@@ -13,8 +13,8 @@
 
 #include "./Video.hpp"
 #include "./Game.hpp"
+#include "./assets.hpp"
 #include "./config.hpp"
-#include "./media.hpp"
 #include "./sdl_helper.hpp"
 #include "./types.hpp"
 
@@ -22,9 +22,8 @@ typedef struct App {
   SDL_Renderer *renderer;
   SDL_Window *window;
   SDL_Surface *screen;
-  SDL_Texture *textures[TEXTURE_TOTAL];
-  SDL_Surface *images[IMAGE_TOTAL];
   SDL_Event event;
+  Assets assets;
   bool exit = false;
 } App;
 
@@ -130,17 +129,8 @@ int main(int argc, char *argv[]) {
   (void)argc;
 
   init();
-
-  // Load media
-  // if (!loadImages(app.screen->format, app.images)) {
-  //   printf("Failed to load media!\n");
-  //   return 2;
-  // }
-
-  // if (!loadTextures(app.renderer, app.textures)) {
-  //   printf("Failed to load media!\n");
-  //   return 2;
-  // }
+  
+  loadAssets(app.assets);
 
   loop();
 
