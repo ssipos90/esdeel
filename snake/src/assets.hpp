@@ -3,34 +3,33 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_surface.h>
 #include <SDL2/SDL_ttf.h>
-#include <map>
+#include <unordered_map>
 #include <string>
 
 using namespace std;
 
 #define FONT_SIZE 16
 
-enum class AssetType {
-    Font,
-    Image
+typedef struct FontAssets {
+    TTF_Font *menu;
+    TTF_Font *score;
+    TTF_Font *game_over;
+} FontAssets;
+
+enum class FontFace {
+    FiraMonoRegular,
+    FiraMonoBold
 };
 
-struct Asset {
-  string path;
-  AssetType type;
+struct FontStyle {
+    FontFace face;
+    int size;
 };
 
-struct Assets {
-    map<string, SDL_Surface*> images;
-    map<string, TTF_Font*> fonts;
+const unordered_map<FontFace, string> font_faces = {
+    {FontFace::FiraMonoRegular, "assets/FiraCode-Regular.ttf"},
+    {FontFace::FiraMonoBold, "assets/FiraCode-bold.ttf"}
 };
 
-const map<string, Asset> assets = {
-    {"FiraMono-Regular", {"assets/FiraCode-Regular.ttf", AssetType::Font}},
-    {"FiraMono-Bold", {"assets/FiraCode-bold.ttf", AssetType::Font}}
-};
 
-void loadAssets();
-
-TTF_Font *loadFont(std::string path, int psize);
-SDL_Surface *loadImage(std::string path);
+FontAssets loadFonts();

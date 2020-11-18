@@ -23,7 +23,7 @@ typedef struct App {
   SDL_Window *window;
   SDL_Surface *screen;
   SDL_Event event;
-  Assets assets;
+  FontAssets fonts;
   bool exit = false;
 } App;
 
@@ -62,18 +62,9 @@ void init() {
 
 // Frees media and shuts down SDL
 void close() {
-  // Deallocate images
-  for (int i = 0; i < IMAGE_TOTAL; i++) {
-    SDL_FreeSurface(app.images[i]);
-    app.images[i] = NULL;
-  }
-
-  // destroy textures
-  for (int i = 0; i < TEXTURE_TOTAL; i++) {
-    SDL_DestroyTexture(app.textures[i]);
-    app.textures[i] = NULL;
-  }
-
+  TTF_CloseFont(app.fonts.menu);
+  TTF_CloseFont(app.fonts.score);
+  TTF_CloseFont(app.fonts.game_over);
   SDL_DestroyRenderer(app.renderer);
   SDL_DestroyWindow(app.window);
   app.renderer = NULL;
@@ -130,7 +121,7 @@ int main(int argc, char *argv[]) {
 
   init();
   
-  loadAssets(app.assets);
+  app.fonts = loadFonts();
 
   loop();
 

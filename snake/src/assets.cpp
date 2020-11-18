@@ -10,30 +10,25 @@
 
 using namespace std;
 
-void loadAssets(Assets &_assets) {
-  for (auto const &[name, asset] : assets) {
-    switch (asset.type) {
-      case AssetType::Font: 
-        _assets.fonts.insert(pair<string, TTF_Font*>{
-          name,
-          loadFont(asset.path, FONT_SIZE)
-        });
-      break;
-      case AssetType::Image:
-        _assets.images.insert(pair<string, SDL_Surface*>{
-          name,
-          loadImage(asset.path)
-        });
-      break;
-    default:
-      fprintf(stderr, "Unknown asset type.");
-      break;
-    }
-    fprintf(stdout, "%s", name.c_str());
-  }
+TTF_Font *loadFontFile(std::string path, int psize);
+TTF_Font *loadFont(FontFace face, int psize);
+
+FontAssets loadFonts() {
+  FontAssets _fonts;
+  _fonts.menu = loadFont(FontFace::FiraMonoBold, 20); 
+  _fonts.score = loadFont(FontFace::FiraMonoRegular, 16); 
+  _fonts.game_over = loadFont(FontFace::FiraMonoBold, 30); 
+
+  return _fonts;
 }
 
-TTF_Font *loadFont(std::string path, int psize) {
+TTF_Font *loadFont(FontFace face, int psize) {
+  string path = font_faces.at(face);
+
+  return loadFontFile(path, psize);
+}
+
+TTF_Font *loadFontFile(std::string path, int psize) {
   auto _path = path.c_str();
   TTF_Font *font = TTF_OpenFont(_path, psize);
   if (font == NULL) {
@@ -43,16 +38,4 @@ TTF_Font *loadFont(std::string path, int psize) {
   }
 
   return font;
-}
-
-SDL_Surface *loadImage(std::string path) {
-  auto _path = path.c_str();
-  SDL_Surface *surface = IMG_Load(_path);
-  if (surface == NULL) {
-    fprintf(stderr, "unable to load image %s. IMG_Error: %s\n", _path,
-            IMG_GetError());
-    exit(1);
-  }
-
-  return surface;
 }
