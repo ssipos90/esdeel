@@ -12,11 +12,13 @@
 #define PADDING_X (int) (CELL_WIDTH * PADDING)
 #define PADDING_Y (int) (CELL_HEIGHT * PADDING)
 
-class GameLayer extends VideoLayer {
-  public:
-  GameLayer(SDL_Renderer *renderer);
+class GameLayer: VideoLayer {
+public:
+  using VideoLayer::VideoLayer;
+  void draw() override;
 
-  private:
+private:
+  Game game;
   SDL_Rect pieceSquare = {0, 0, CELL_WIDTH - PADDING_X * 2 , CELL_HEIGHT - PADDING_Y * 2};
   SDL_Renderer *renderer;
 

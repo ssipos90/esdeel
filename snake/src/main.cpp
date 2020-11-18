@@ -100,11 +100,8 @@ void loop() {
     // time spent since last renderer present
     deltatime = starttime - endtime;
 
-    // progress game stuff
-    game.progress(deltatime);
-
     // draw game state
-    video.draw(&game);
+    video.progress(deltatime);
 
     SDL_RenderPresent(app.renderer);
 
