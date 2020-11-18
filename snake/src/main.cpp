@@ -65,8 +65,10 @@ void close() {
   TTF_CloseFont(app.fonts.menu);
   TTF_CloseFont(app.fonts.score);
   TTF_CloseFont(app.fonts.game_over);
+
   SDL_DestroyRenderer(app.renderer);
   SDL_DestroyWindow(app.window);
+
   app.renderer = NULL;
   app.window = NULL;
 

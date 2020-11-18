@@ -1,9 +1,8 @@
 #include <SDL2/SDL_render.h>
-#include "./Video.hpp"
-#include "./Game.hpp"
+#include "./GameLayer.hpp"
 #include "./config.hpp"
 
-Video::Video(SDL_Renderer *renderer) : renderer(renderer) {}
+GameLayer::GameLayer(SDL_Renderer *renderer) : renderer(renderer) {}
 
 void Video::draw(Game *game) {
   drawBackground();
