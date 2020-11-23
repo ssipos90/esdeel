@@ -1,9 +1,9 @@
 #pragma once
-#include <SDL2/SDL_events.h>
-#include <vector>
 #ifndef GAME_H_
 #define GAME_H_
 
+#include <vector>
+#include <SDL2/SDL_events.h>
 #include "./Snake.hpp"
 #include "./Food.hpp"
 

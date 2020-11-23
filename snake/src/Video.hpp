@@ -3,18 +3,21 @@
 #define VIDEO_H_
 
 #include <vector>
+#include <memory>
 #include <SDL2/SDL_render.h>
 #include "./VideoLayer.hpp"
+#include "./types.hpp"
 
 class Video {
 public:
-  Video(SDL_Renderer *renderer);
+  Video(const App &app);
+  virtual ~Video() = default; // to silence -Wall warnings
 
   void progress(uint32_t deltatime);
 
 private:
-  SDL_Renderer *renderer;
-  std::vector<VideoLayer> layers;
+  const App &app;
+  std::vector<std::shared_ptr<VideoLayer>> layers;
 };
 
 #endif // VIDEO

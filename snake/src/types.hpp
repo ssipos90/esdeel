@@ -1,4 +1,21 @@
 #pragma once
+#ifndef TYPES_H_
+#define TYPES_H_
+
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_surface.h>
+#include <SDL2/SDL_video.h>
+#include "./assets.hpp"
+
+typedef struct App {
+  SDL_Renderer *renderer;
+  SDL_Window *window;
+  SDL_Surface *screen;
+  SDL_Event event;
+  FontAssets fonts;
+  bool exit = false;
+} App;
 
 enum ResourceImages {
   IMAGE_DEFAULT,
@@ -23,3 +40,5 @@ typedef struct Position {
   int x;
   int y;
 } Position;
+
+#endif // TYPES

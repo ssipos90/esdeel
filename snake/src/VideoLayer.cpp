@@ -1,3 +1,4 @@
 #include "./VideoLayer.hpp"
+#include "./types.hpp"
 
-VideoLayer::VideoLayer(SDL_Renderer *renderer, const FontAssets &fonts): renderer(renderer), fonts(fonts) {}
+VideoLayer::VideoLayer(const App& app): app(app) {}

@@ -5,5 +5,5 @@
 #include "./assets.hpp"
 
 void MainMenuLayer::draw() {
-  TTF_RenderUTF8_Blended(fonts.menu, "ceva" , fg);
+  TTF_RenderUTF8_Blended(app.fonts.menu, "ceva", *fg);
 };

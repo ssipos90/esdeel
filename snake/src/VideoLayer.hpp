@@ -4,14 +4,15 @@
 
 #include <SDL2/SDL_render.h>
 #include "./assets.hpp"
+#include "./types.hpp"
 
 class VideoLayer {
 public:
-  VideoLayer(SDL_Renderer *renderer, const FontAssets &fonts);
-  virtual void draw();
+  VideoLayer(const App &app);
+  virtual void draw(uint32_t deltatime);
 
 protected:
-  const FontAssets &fonts;
+  const App &app;
 };
 
 #endif // VIDEO_LAYER

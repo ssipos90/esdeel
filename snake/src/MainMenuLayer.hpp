@@ -9,11 +9,11 @@
 class MainMenuLayer: VideoLayer {
 public:
   using VideoLayer::VideoLayer;
-  void draw() override;
+  void draw(uint32_t deltatime) override;
 
 private:
   SDL_Color* fg;
-  SDL_Color* bg;
+  //SDL_Color* bg;
 };
 
 #endif // MAIN_MENU_LAYER

@@ -1,33 +1,18 @@
-#include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_surface.h>
-#include <SDL2/SDL_timer.h>
-#include <SDL2/SDL_ttf.h>
 #include <cstring>
 #include <map>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
+#include "./sdl_helper.hpp"
 #include "./Video.hpp"
 #include "./Game.hpp"
 #include "./assets.hpp"
 #include "./config.hpp"
-#include "./sdl_helper.hpp"
 #include "./types.hpp"
 
-typedef struct App {
-  SDL_Renderer *renderer;
-  SDL_Window *window;
-  SDL_Surface *screen;
-  SDL_Event event;
-  FontAssets fonts;
-  bool exit = false;
-} App;
-
-auto app = App{};
+App app;
 
 // Starts up SDL and creates window
 void init() {
@@ -85,7 +70,7 @@ void loop() {
   uint32_t endtime = 0;
   uint32_t deltatime;
   Game game;
-  Video video(app.renderer);
+  Video video(app);
   while (!app.exit) {
     starttime = SDL_GetTicks();
     while (SDL_PollEvent(&app.event) != 0) {
