@@ -10,10 +10,6 @@
 
 struct MenuItem {
   std::string label;
-  std::function<void()> fn;
-};
-
-struct MenuItem2 {
   SDL_Texture *texture;
 };
 
@@ -23,8 +19,10 @@ public:
   void draw(uint32_t deltatime) override;
 
 private:
-  std::vector<std::unique_ptr<SDL_Texture>> menu;
+  std::vector<MenuItem> menu;
   SDL_Color fg{0xCC, 0x00, 0x00, 0x0};
-  
+
+  static MenuItem renderMenuItem(SDL_Renderer *renderer, TTF_Font *font, std::string text, SDL_Color *color);
+
   //SDL_Color *bg;
 };
