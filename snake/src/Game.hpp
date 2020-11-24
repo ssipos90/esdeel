@@ -1,6 +1,4 @@
 #pragma once
-#ifndef GAME_H_
-#define GAME_H_
 
 #include <vector>
 #include <SDL2/SDL_events.h>
@@ -27,5 +25,3 @@ private:
   void moveFood(const std::vector<Position> *occupied);
   bool isColliding(const std::vector<Position> *occupied, Position *p);
 };
-
-#endif // GAME

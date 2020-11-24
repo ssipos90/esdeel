@@ -1,7 +1,5 @@
 #pragma once
 #include <vector>
-#ifndef FOOD_H_
-#define FOOD_H_
 
 #include "./types.hpp"
 
@@ -13,5 +11,3 @@ public:
 private:
   Position pos;
 };
-
-#endif // FOOD

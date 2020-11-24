@@ -27,9 +27,8 @@ struct FontStyle {
 };
 
 const unordered_map<FontFace, string> font_faces = {
-    {FontFace::FiraMonoRegular, "assets/FiraCode-Regular.ttf"},
-    {FontFace::FiraMonoBold, "assets/FiraCode-bold.ttf"}
+    {FontFace::FiraMonoRegular, "FiraMono-Regular.ttf"},
+    {FontFace::FiraMonoBold, "FiraMono-Bold.ttf"}
 };
-
 
 FontAssets loadFonts();

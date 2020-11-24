@@ -1,5 +1,3 @@
-#ifndef GAME_LAYER_H_
-#define GAME_LAYER_H_
 
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
@@ -12,15 +10,14 @@
 #define PADDING_X (int) (CELL_WIDTH * PADDING)
 #define PADDING_Y (int) (CELL_HEIGHT * PADDING)
 
-class GameLayer: VideoLayer {
+class GameLayer: public VideoLayer {
 public:
   using VideoLayer::VideoLayer;
-  void draw() override;
+  void draw(uint32_t deltatime) override;
 
 private:
   Game game;
   SDL_Rect pieceSquare = {0, 0, CELL_WIDTH - PADDING_X * 2 , CELL_HEIGHT - PADDING_Y * 2};
-  SDL_Renderer *renderer;
 
   void drawFood(Position p);
   void drawSnake(const std::vector<Position> *pieces);
@@ -28,5 +25,3 @@ private:
   void drawGrid();
   void drawBackground();
 };
-
-#endif // GAME_LAYER

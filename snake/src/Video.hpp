@@ -1,6 +1,5 @@
 #pragma once
-#ifndef VIDEO_H_
-#define VIDEO_H_
+#include "MainMenuLayer.hpp"
 
 #include <vector>
 #include <memory>
@@ -17,7 +16,5 @@ public:
 
 private:
   const App &app;
-  std::vector<std::shared_ptr<VideoLayer>> layers;
+  std::vector<std::unique_ptr<VideoLayer>> layers;
 };
-
-#endif // VIDEO

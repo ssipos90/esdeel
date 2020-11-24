@@ -1,6 +1,4 @@
 #pragma once
-#ifndef TYPES_H_
-#define TYPES_H_
 
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_render.h>
@@ -40,5 +38,3 @@ typedef struct Position {
   int x;
   int y;
 } Position;
-
-#endif // TYPES

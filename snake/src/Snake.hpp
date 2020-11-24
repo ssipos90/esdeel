@@ -1,6 +1,4 @@
 #pragma once
-#ifndef SNAKE_H_
-#define SNAKE_H_
 
 #include <vector>
 #include <SDL2/SDL_stdinc.h>
@@ -36,5 +34,3 @@ private:
 
   void go(Direction dir);
 };
-
-#endif // SNAKE
