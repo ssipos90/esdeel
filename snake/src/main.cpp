@@ -7,7 +7,6 @@
 
 #include "./sdl_helper.hpp"
 #include "./Video.hpp"
-#include "./Game.hpp"
 #include "./assets.hpp"
 #include "./config.hpp"
 #include "./types.hpp"
@@ -63,41 +62,6 @@ void close() {
   SDL_Quit();
 }
 
-void loop() {
-  srand(time(0));
-
-  uint32_t starttime;
-  uint32_t endtime = 0;
-  uint32_t deltatime;
-  Game game;
-  Video video(app);
-  while (!app.exit) {
-    starttime = SDL_GetTicks();
-    while (SDL_PollEvent(&app.event) != 0) {
-      if (app.event.type == SDL_QUIT) {
-        app.exit = true;
-        break;
-      } else {
-        game.handleEvent(&app.event);
-      }
-    }
-
-    // time spent since last renderer present
-    deltatime = starttime - endtime;
-
-    // draw game state
-    video.progress(deltatime);
-
-    SDL_RenderPresent(app.renderer);
-
-    endtime = SDL_GetTicks();
-    deltatime = endtime - starttime;
-    if (deltatime <= (1000 / FPS)) {
-      SDL_Delay((1000 / FPS) - deltatime);
-    }
-  }
-}
-
 int main(int argc, char *argv[]) {
   // silence the compiler
   (void)argv[0];
@@ -107,7 +71,10 @@ int main(int argc, char *argv[]) {
   
   app.fonts = loadFonts();
 
-  loop();
+  srand(time(0));
+  Video video(app);
+
+  video.loop();
 
   close();
 
