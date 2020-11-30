@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <memory>
 #include "./Video.hpp"
-#include "./MainMenuLayer.hpp"
+#include "./MenuLayer.hpp"
 #include "./VideoLayer.hpp"
 #include "./config.hpp"
 #include "./types.hpp"
@@ -9,7 +9,7 @@
 #include <SDL2/SDL_render.h>
 
 Video::Video(const App &app) : app(app) {
-  layers.emplace_back(new MainMenuLayer(this->app));
+  layers.emplace_back(new MenuLayer(this->app));
 };
 
 void Video::loop() {
@@ -35,10 +35,10 @@ void Video::loop() {
 
 void Video::handleEvent() {
   while (SDL_PollEvent(&event) != 0) {
-    if (event.type == SDL_QUIT) {
-      exit = true;
-      break;
-    } else {
+    for (auto &layer : layers) {
+      if ((*layer).handleEvent(event)) {
+        break; 
+      }
     }
   }
 }
@@ -49,5 +49,8 @@ void Video::progress() {
 
   for (auto &layer : layers) {
     (*layer).draw(deltatime);
+    if ((*layer).isOpaque()) {
+      break;
+    }
   }
 };

@@ -9,26 +9,25 @@ LDFLAGS  = $(CXXFLAGS) $(LIBS) -L./lib -MMD
 # Folders
 SRC_DIR = src
 OBJ_DIR = build/obj
-BIN_DIR = build/bin
 
 SOURCES := $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS = $(SOURCES:$(SRC_DIR)/%.cpp=$(OBJ_DIR)/%.o)
 
 DEPS = $(OBJECTS:.o=.d)
 
-$(BIN_DIR)/$(APP): $(OBJECTS)
+$(APP): $(OBJECTS)
 	$(CXX) $(LDFLAGS) $(OBJECTS) -o $@ 
 -include $(DEPS)
 
 $(OBJECTS): $(OBJ_DIR)/%.o : $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-all: $(BIN_DIR)/$(APP)
+all: $(APP)
 
-debug: CXXFLAGS += -DDEBUG -g
-debug: $(BIN_DIR)/$(APP)
+debug: $(DBGFLAGS)
+debug: $(APP)
 
 clean:
-	$(RM) build/obj/* build/bin/*
+	$(RM) build/obj/* $(APP)
 
 .PHONY: clean all

@@ -3,7 +3,7 @@
 #include <memory>
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_render.h>
-#include "./MainMenuLayer.hpp"
+#include "./MenuLayer.hpp"
 #include "./VideoLayer.hpp"
 #include "./types.hpp"
 
